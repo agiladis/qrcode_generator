@@ -1,16 +1,23 @@
 <?php
-$koneksi = mysqli_connect ('localhost','root','','db-serial-number');
+include './inc/koneksi.php';
 
 // Retrieve the serial number from the database
-$sql = "SELECT serial_number FROM identity ORDER BY id DESC LIMIT 1";
-$result = mysqli_query($koneksi, $sql);
+$result = mysqli_query($koneksi, "SELECT * FROM product ORDER BY id_product DESC LIMIT 1");
+$data_exist = true;
 
 if (mysqli_num_rows($result) > 0) {
     // Read the serial number from the database
     $row = mysqli_fetch_assoc($result);
-    $serial_number = $row["serial_number"];
+	
+	// Get last registered serial number
+	$prefix = "SN-";
+	$last_digit_serial_number = intval(substr($row["serial_number"], -4));
+    $serial_number = $prefix . sprintf('%04d', $last_digit_serial_number + 1);
+    $last_serial_number = $prefix . sprintf('%04d', $last_digit_serial_number);
 } else {
-    echo "No records found in the database.";
+	$serial_number = "SN-0001";
+	$data_exist = false;
+    // echo "No records found in the database.";
 }
 
 ?>
@@ -27,12 +34,16 @@ if (mysqli_num_rows($result) > 0) {
 	</form> -->
     <br>
     <br>
-	<form method="POST" action="\lib\gn_serial.php">
+	<form method="POST" action="lib/gn_serial.php">
 		<label for="qr_data">Serial number to be generated</label><br>
 		<input type="text" id="qr_data" name="qr_data" value= "<?php echo $serial_number; ?>" readonly><br><br>
 		<input type="submit" name="submit" value="Generate QR Code">
 	</form>
+	<?php if ($data_exist) : ?>
+		<?php echo '<img src="./qrimage/'.$last_serial_number.'.png" alt="QR Code">'; ?>
+		<!-- <?php echo '<img src="asik.png" alt="QR Code">'; ?> -->
+		<p>Last Serial Number : <?php echo $last_serial_number ?></p>
+	<?php endif ?>
 
-	<?php echo '<img src="qrcode.png" alt="QR Code">'; ?>
 </body>
 </html>

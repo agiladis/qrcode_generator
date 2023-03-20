@@ -1,13 +1,13 @@
 <?php
-$koneksi = mysqli_connect ('localhost','root','','db-serial-number');
-include ('/phpqrcode/qrlib.php');
+include '../inc/koneksi.php';
+include '../lib/phpqrcode/qrlib.php';
 
 // Generate the new serial number
-$prefix = "LST-0323-"; // Define the prefix
+$prefix = "SN-"; // Define the prefix
 $serial_number = $prefix . sprintf('%04d', 1); // Set the initial serial number to LST-0323-0001
 
 // Check if a record containing the last serial number exists in the database
-$sql = "SELECT serial_number FROM identity ORDER BY id DESC LIMIT 1";
+$sql = "SELECT * FROM product ORDER BY id_product DESC LIMIT 1";
 $result = mysqli_query($koneksi, $sql);
 
 if (mysqli_num_rows($result) > 0) {
@@ -18,16 +18,18 @@ if (mysqli_num_rows($result) > 0) {
 }
 
 // Insert the new serial number into the database
-$sql = "INSERT INTO identity (serial_number) VALUES ('$serial_number')";
+$sql = "INSERT INTO product (serial_number) VALUES ('$serial_number')";
 if (mysqli_query($koneksi, $sql)) {
     echo "New record created successfully. Serial number is $serial_number";
     echo "<script>alert('New record created successfully.');</script>";
-    echo "<script>window.location.href='index.php';</script>";
+    // echo "<script>window.location.href='index.php';</script>";
+    header("Location: ../index.php?");
 } else {
     echo "Error: " . $sql . "<br>" . mysqli_error($koneksi);
 }
 
-QRcode::png($serial_number, "qrcode.png");
+// QRcode::png($serial_number, "$serial_number.png");
+QRcode::png($serial_number, dirname(__DIR__)."/qrimage/$serial_number.png");
 
 
 // $qr_data = '';

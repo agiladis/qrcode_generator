@@ -40,7 +40,8 @@ if (mysqli_num_rows($result) > 0) {
 		<input type="submit" name="submit" value="Generate QR Code">
 	</form>
 	<?php if ($data_exist) : ?>
-		<?php echo '<img src="./qrimage/'.$last_serial_number.'.png" alt="QR Code">'; ?>
+		<!-- <?php echo '<img src="./qrimage/'.$last_serial_number.'.png" alt="QR Code">'; ?> -->
+		<?php echo '<img src="./'.$row['qr_image_path'].'" alt="QR Code">'; ?>
 		<!-- <?php echo '<img src="asik.png" alt="QR Code">'; ?> -->
 		<p>Last Serial Number : <?php echo $last_serial_number ?></p>
 	<?php endif ?>

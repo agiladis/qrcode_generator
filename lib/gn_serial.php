@@ -18,18 +18,20 @@ if (mysqli_num_rows($result) > 0) {
 }
 
 // Insert the new serial number into the database
-$sql = "INSERT INTO product (serial_number) VALUES ('$serial_number')";
+$sql = "INSERT INTO product (serial_number, qr_image_path) VALUES ('$serial_number', 'qrimage/$serial_number.png')";
 if (mysqli_query($koneksi, $sql)) {
     echo "New record created successfully. Serial number is $serial_number";
     echo "<script>alert('New record created successfully.');</script>";
-    // echo "<script>window.location.href='index.php';</script>";
+    
+    // if success store data to databse create image file
+    QRcode::png($serial_number, dirname(__DIR__)."/qrimage/$serial_number.png");
+
+    // redirect to other index page
     header("Location: ../index.php?");
 } else {
     echo "Error: " . $sql . "<br>" . mysqli_error($koneksi);
 }
 
-// QRcode::png($serial_number, "$serial_number.png");
-QRcode::png($serial_number, dirname(__DIR__)."/qrimage/$serial_number.png");
 
 
 // $qr_data = '';
